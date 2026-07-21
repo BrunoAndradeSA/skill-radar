@@ -1,0 +1,43 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend (FastAPI)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--reload"
+      ],
+      "python": "${workspaceFolder}/backend/.venv/bin/python",
+      "jinja": true,
+      "envFile": "${workspaceFolder}/backend/.env",
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Frontend (Vite)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/frontend",
+      "console": "integratedTerminal"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "F5 - Full Stack (Backend + Frontend)",
+      "configurations": ["Backend (FastAPI)", "Frontend (Vite)"],
+      "stopAll": true,
+      "presentation": {
+        "order": 1,
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "",
+        "hidden": false
+      }
+    }
+  ]
+}

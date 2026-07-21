@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: skill-radar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: skill_radar
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev -d skill_radar"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: skill-radar-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_HOST: db
+      APP_ENV: production
+    networks:
+      - backend-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api/v1
+        VITE_MOCK_MODE: false
+    container_name: skill-radar-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    networks:
+      - backend-network
+    depends_on:
+      - backend
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
