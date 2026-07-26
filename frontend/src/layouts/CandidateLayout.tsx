@@ -3,10 +3,12 @@ import { Outlet, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { Moon, Sun } from 'lucide-react';
+import { Moon, Sun, Cookie } from 'lucide-react';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { RepositoryFactory } from '../repositories/RepositoryFactory';
 import { InvitationService } from '../services/invitation.service';
+import { CookieConsentBanner } from '../components/CookieConsentBanner';
+import { CookieConsentDialog } from '../components/CookieConsentDialog';
 
 const PROTECTED_EXAM_ROUTES = ['/exam/rules', '/exam/start', '/exam/result'];
 
@@ -21,6 +23,7 @@ const CandidateLayout: React.FC = () => {
   const isProtectedRoute = PROTECTED_EXAM_ROUTES.includes(location.pathname);
   const [validating, setValidating] = useState(isProtectedRoute);
   const [isValid, setIsValid] = useState(!isProtectedRoute);
+  const [cookieDialogOpen, setCookieDialogOpen] = useState(false);
   const validatedRef = useRef(false);
 
   useEffect(() => {
@@ -78,11 +81,18 @@ const CandidateLayout: React.FC = () => {
             Skill Radar - Exame
           </span>
         </div>
-        <Tooltip title={mode === 'dark' ? 'Modo claro' : 'Modo escuro'}>
-          <IconButton onClick={toggleTheme} size="small" sx={{ color: 'text.secondary' }}>
-            {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </IconButton>
-        </Tooltip>
+        <div className="flex items-center gap-1">
+          <Tooltip title="Configurações de cookies">
+            <IconButton onClick={() => setCookieDialogOpen(true)} size="small" sx={{ color: 'text.secondary' }}>
+              <Cookie size={18} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title={mode === 'dark' ? 'Modo claro' : 'Modo escuro'}>
+            <IconButton onClick={toggleTheme} size="small" sx={{ color: 'text.secondary' }}>
+              {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </IconButton>
+          </Tooltip>
+        </div>
       </header>
 
       <main className="flex-1 flex flex-col min-h-0">
@@ -90,6 +100,20 @@ const CandidateLayout: React.FC = () => {
           <Outlet />
         </div>
       </main>
+
+      <CookieConsentBanner />
+
+      <CookieConsentDialog
+        open={cookieDialogOpen}
+        onClose={() => setCookieDialogOpen(false)}
+        onRevoke={() => {
+          localStorage.removeItem('cookie_consent');
+          sessionStorage.removeItem('exam_token');
+          sessionStorage.removeItem('exam_authenticated');
+          setCookieDialogOpen(false);
+          window.location.href = '/';
+        }}
+      />
     </div>
   );
 };

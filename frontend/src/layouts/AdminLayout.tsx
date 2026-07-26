@@ -5,11 +5,12 @@ import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { Moon, Sun, LogOut, Menu, LayoutDashboard, Palette, Brain, CircleHelp, FileText, Mail, ClipboardList, UserCheck, Briefcase } from 'lucide-react';
+import { Moon, Sun, LogOut, Menu, LayoutDashboard, Palette, Brain, CircleHelp, FileText, Mail, ClipboardList, UserCheck, Briefcase, Cookie } from 'lucide-react';
 import { useThemeMode } from '../hooks/useThemeMode';
 import { useUserStore } from '../store/useUserStore';
 import { FeatureFlagService } from '../feature-flags/FeatureFlagService';
 import { SnackbarProvider } from '../hooks/useSnackbar';
+import { CookieConsentDialog } from '../components/CookieConsentDialog';
 
 const navItems = [
   { label: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
@@ -96,6 +97,7 @@ const AdminLayout: React.FC = () => {
   const isAuthenticated = useUserStore((s) => s.isAuthenticated);
   const logout = useUserStore((s) => s.logout);
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [cookieDialogOpen, setCookieDialogOpen] = React.useState(false);
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -174,6 +176,11 @@ const AdminLayout: React.FC = () => {
           </button>
 
           <div className="flex items-center gap-1">
+            <Tooltip title="Configurações de cookies">
+              <IconButton onClick={() => setCookieDialogOpen(true)} size="small">
+                <Cookie size={18} />
+              </IconButton>
+            </Tooltip>
             <Tooltip title={mode === 'dark' ? 'Modo claro' : 'Modo escuro'}>
               <IconButton onClick={toggleTheme} size="small">
                 {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
@@ -190,6 +197,15 @@ const AdminLayout: React.FC = () => {
           </div>
         </main>
       </div>
+
+      <CookieConsentDialog
+        open={cookieDialogOpen}
+        onClose={() => setCookieDialogOpen(false)}
+        onRevoke={() => {
+          localStorage.removeItem('cookie_consent');
+          setCookieDialogOpen(false);
+        }}
+      />
     </div>
   );
 };

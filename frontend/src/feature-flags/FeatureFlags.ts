@@ -18,6 +18,7 @@ export interface FeatureFlags {
   enableCompetencyRecommendations: boolean;
   enableAdvancedDashboard: boolean;
   enableUndoActions: boolean;
+  enableCookieConsent: boolean;
 }
 
 export const defaultFeatureFlags: FeatureFlags = {
@@ -40,4 +41,5 @@ export const defaultFeatureFlags: FeatureFlags = {
   enableCompetencyRecommendations: false,
   enableAdvancedDashboard: false,
   enableUndoActions: false,
+  enableCookieConsent: true,
 };

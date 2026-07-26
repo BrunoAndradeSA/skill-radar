@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import RadarScan from '../components/RadarScan';
+import { CookieConsentBanner } from '../components/CookieConsentBanner';
 
 const AuthLayout: React.FC = () => {
   return (
@@ -36,6 +37,8 @@ const AuthLayout: React.FC = () => {
           <Outlet />
         </div>
       </div>
+
+      <CookieConsentBanner />
     </div>
   );
 };
